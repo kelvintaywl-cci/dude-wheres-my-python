@@ -1,0 +1,35 @@
+version: 2.1
+
+jobs:
+  inspect:
+    parameters:
+      img:
+        type: string
+    docker:
+      - image: << parameters.img >>
+    resource_class: small
+    steps:
+      - run:
+          name: check Python
+          command: |
+            which python
+            python --version
+      - run:
+          name: check Pip
+          command: |
+            which pip
+            pip --version
+      - run:
+          name: check pyenv
+          command: |
+            which pyenv || true
+            
+workflows:
+  snakecharm:
+    jobs:
+      - inspect:
+          matrix:
+            parameters:
+              img:
+                - circleci/python:3.7
+                - cimg/python:3.7
