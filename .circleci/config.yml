@@ -10,14 +10,14 @@ commands:
     steps:
     - restore_cache:
         name: Restoring VENV Cache
-        key: << .parameters.cache-key >>-{{ checksum "data-pipelines/requirements.txt" }}
+        key: << parameters.cache-key >>-{{ checksum "data-pipelines/requirements.txt" }}
     - run:
         name: Setup Python venv
         command: |
           make setup
     - save_cache:
         name: Saving VENV Cache
-        key: << .parameters.cache-key >>-{{ checksum "data-pipelines/requirements.txt" }}
+        key: << parameters.cache-key >>-{{ checksum "data-pipelines/requirements.txt" }}
         paths:
         - ./venv
 
@@ -46,7 +46,7 @@ jobs:
           command: |
             which pyenv || true
       - setup_python_env:
-          cache-key: << .parameters.img >>
+          cache-key: << parameters.img >>
       - run:
           name: check deps
           command: |
