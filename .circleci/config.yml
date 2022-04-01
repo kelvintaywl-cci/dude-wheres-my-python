@@ -26,6 +26,7 @@ jobs:
       - image: << parameters.img >>
     resource_class: small
     steps:
+      - checkout
       - run:
           name: check Python
           command: |
