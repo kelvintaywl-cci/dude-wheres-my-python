@@ -1,19 +1,23 @@
 version: 2.1
 
 commands:
+  parameters:
+    cache-key:
+      type: string
+      default: venv-v1
   setup_python_env:
     description: Setup Python env
     steps:
     - restore_cache:
         name: Restoring VENV Cache
-        key: venv-v1-{{ checksum "data-pipelines/requirements.txt" }}
+        key: << .parameters.cache-key >>-{{ checksum "data-pipelines/requirements.txt" }}
     - run:
         name: Setup Python venv
         command: |
           make setup
     - save_cache:
         name: Saving VENV Cache
-        key: venv-v1-{{ checksum "data-pipelines/requirements.txt" }}
+        key: << .parameters.cache-key >>-{{ checksum "data-pipelines/requirements.txt" }}
         paths:
         - ./venv
 
@@ -41,7 +45,8 @@ jobs:
           name: check pyenv
           command: |
             which pyenv || true
-      - setup_python_env
+      - setup_python_env:
+          cache-key: << .parameters.img >>
       - run:
           name: check deps
           command: |
