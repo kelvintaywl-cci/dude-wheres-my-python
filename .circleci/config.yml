@@ -1,11 +1,11 @@
 version: 2.1
 
 commands:
-  parameters:
-    cache-key:
-      type: string
-      default: venv-v1
   setup_python_env:
+    parameters:
+      cache-key:
+        type: string
+        default: venv-v1
     description: Setup Python env
     steps:
     - restore_cache:
