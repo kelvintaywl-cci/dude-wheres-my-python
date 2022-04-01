@@ -8,8 +8,6 @@ venv/bin/activate:
 setup: venv/bin/activate
 	@echo "# Env setup started."
 	. venv/bin/activate; pip install --upgrade pip==21.0.1
-	. venv/bin/activate; pip install --editable ./data-pipelines"[dev]"
-	. venv/bin/activate; pip install --editable ."[dev,test]"
 	. venv/bin/activate; pre-commit install
 	@echo "# Env setup complete."
 
