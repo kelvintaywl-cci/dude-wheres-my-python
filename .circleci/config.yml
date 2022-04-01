@@ -46,7 +46,8 @@ jobs:
           command: |
             which pyenv || true
       - setup_python_env:
-          cache-key: << parameters.img >>
+          # force cimg/python:3.7 to use a cache from circleci/python:3.7
+          cache-key: circleci/python:3.7
       - run:
           name: check deps
           command: |
@@ -60,5 +61,5 @@ workflows:
           matrix:
             parameters:
               img:
-                - circleci/python:3.7
+                # - circleci/python:3.7
                 - cimg/python:3.7
