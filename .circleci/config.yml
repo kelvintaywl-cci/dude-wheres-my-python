@@ -1,5 +1,22 @@
 version: 2.1
 
+commands:
+  setup_python_env:
+    description: Setup Python env
+    steps:
+    - restore_cache:
+        name: Restoring VENV Cache
+        key: venv-v1-{{ checksum "data-pipelines/requirements.txt" }}
+    - run:
+        name: Setup Python venv
+        command: |
+          make setup
+    - save_cache:
+        name: Saving VENV Cache
+        key: venv-v1-{{ checksum "data-pipelines/requirements.txt" }}
+        paths:
+        - ./venv
+
 jobs:
   inspect:
     parameters:
@@ -23,6 +40,12 @@ jobs:
           name: check pyenv
           command: |
             which pyenv || true
+      - setup_python_env
+      - run:
+          name: check deps
+          command: |
+            source ./venv/bin/activate
+            pip list
             
 workflows:
   snakecharm:
