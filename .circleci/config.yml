@@ -1,6 +1,22 @@
 version: 2.1
 
 commands:
+  check_python:
+    steps:
+      - run:
+          name: check Python
+          command: |
+            which python
+            python --version
+      - run:
+          name: check Pip
+          command: |
+            which pip
+            pip --version
+       - run:
+          name: check pyenv
+          command: |
+            which pyenv || true
   setup_python_env:
     parameters:
       cache-key:
@@ -22,6 +38,21 @@ commands:
         - ./venv
 
 jobs:
+  install:
+    parameters:
+      img: string    
+    docker:
+      - image: << parameters.img >>
+    steps:
+      - checkout
+      - check_python
+      - run: |
+          make venv/bin/activate
+      - run:
+          name: install deps
+          command: |
+            . venv/bin/activate; pip install pre-commit
+            pip list --verbose
   inspect:
     parameters:
       img:
@@ -31,20 +62,7 @@ jobs:
     resource_class: small
     steps:
       - checkout
-      - run:
-          name: check Python
-          command: |
-            which python
-            python --version
-      - run:
-          name: check Pip
-          command: |
-            which pip
-            pip --version
-      - run:
-          name: check pyenv
-          command: |
-            which pyenv || true
+      - check_python
       - setup_python_env:
           # force cimg/python:3.7 to use a cache from circleci/python:3.7
           cache-key: circleci/python:3.7
@@ -55,11 +73,19 @@ jobs:
             pip list
             
 workflows:
-  snakecharm:
+  diff:
     jobs:
-      - inspect:
+      - install:
           matrix:
             parameters:
               img:
-                # - circleci/python:3.7
-                - cimg/python:3.7
+                - cimg/python@sha256:f90d693d4a067ed5bceb970aef66da005198b3cba34dc0615c72645d50ad95ae
+                - cimg/python@sha256:845ede0b8a80d2d961b9f5cecb00261a3b4d6152ddf66eae6f575ee3663bda05
+#   snakecharm:
+#     jobs:
+#       - inspect:
+#           matrix:
+#             parameters:
+#               img:
+#                 # - circleci/python:3.7
+#                 - cimg/python:3.7
