@@ -13,10 +13,10 @@ commands:
           command: |
             which pip
             pip --version
-       - run:
+      - run:
           name: check pyenv
           command: |
-            which pyenv || true
+             which pyenv || true
   setup_python_env:
     parameters:
       cache-key:
@@ -40,7 +40,8 @@ commands:
 jobs:
   install:
     parameters:
-      img: string    
+      img:
+        type: string    
     docker:
       - image: << parameters.img >>
     steps:
