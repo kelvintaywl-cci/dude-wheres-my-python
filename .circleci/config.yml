@@ -38,6 +38,28 @@ commands:
         - ./venv
 
 jobs:
+  pipenv:
+    docker:
+      - image: cimg/python:3.8
+    environment:
+      PIPENV_VENV_IN_PROJECT: 1
+    steps:
+      - checkout:
+          path: src
+      - restore_cache:
+          keys:
+            - venv-{{ .Branch }}-{{ checksum "src/Pipfile.lock" }}
+            - venv-{{ .Branch }}-
+            - venv-
+      - run:
+          name: Install Requirements
+          working_directory: src
+          command: |
+            pipenv sync --dev
+      - save_cache:
+          paths:
+            - src/.venv # this path depends on where pipenv creates a virtualenv
+          key: venv-{{ .Branch }}-{{ checksum "src/Pipfile.lock" }}
   install:
     parameters:
       img:
@@ -74,14 +96,17 @@ jobs:
             pip list
             
 workflows:
-  diff:
+  pipenv:
     jobs:
-      - install:
-          matrix:
-            parameters:
-              img:
-                - cimg/python@sha256:f90d693d4a067ed5bceb970aef66da005198b3cba34dc0615c72645d50ad95ae
-                - cimg/python@sha256:845ede0b8a80d2d961b9f5cecb00261a3b4d6152ddf66eae6f575ee3663bda05
+      - pipenv
+  # diff:
+  #   jobs:
+  #     - install:
+  #         matrix:
+  #           parameters:
+  #             img:
+  #               - cimg/python@sha256:f90d693d4a067ed5bceb970aef66da005198b3cba34dc0615c72645d50ad95ae
+  #               - cimg/python@sha256:845ede0b8a80d2d961b9f5cecb00261a3b4d6152ddf66eae6f575ee3663bda05
 #   snakecharm:
 #     jobs:
 #       - inspect:
