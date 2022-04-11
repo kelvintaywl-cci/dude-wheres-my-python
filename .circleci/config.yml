@@ -52,6 +52,11 @@ jobs:
             - venv-{{ .Branch }}-
             - venv-
       - run:
+          name: Inspect venv
+          working_directory: src
+          command: |
+            la -laH .venv/bin/
+      - run:
           name: Install Requirements
           working_directory: src
           command: |
