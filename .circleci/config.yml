@@ -55,7 +55,7 @@ jobs:
           name: Inspect venv
           working_directory: src
           command: |
-            la -laH .venv/bin/
+            ls -laH .venv/bin/
       - run:
           name: Install Requirements
           working_directory: src
